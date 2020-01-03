@@ -1,54 +1,40 @@
-const titleElement = document.querySelector('#note-title')
-const bodyElement = document.querySelector('#note-body')
-const removeElement = document.querySelector('#remove-note')
-const dateElement = document.querySelector('#last-edited')
-const noteId = location.hash.substring(1)
 let notes = getSavedNotes()
-let note = notes.find(function (note) {
-    return note.id === noteId
-})
 
-if (note === undefined) {
-    location.assign('/index.html')
+const filters = {
+    searchText: '',
+    sortBy: 'byEdited'
 }
 
-titleElement.value = note.title
-bodyElement.value = note.body
-dateElement.textContent = generateLastEdited(note.updatedAt)
+renderNotes(notes, filters)
 
-titleElement.addEventListener('input', function (e) {
-    note.title = e.target.value
-    note.updatedAt = moment().valueOf()
-    dateElement.textContent = generateLastEdited(note.updatedAt)
+document.querySelector('#create-note').addEventListener('click', (e) => {
+    const id = uuidv4()
+    const timestamp = moment().valueOf()
+
+    notes.push({
+        id: id,
+        title: '',
+        body: '',
+        createdAt: timestamp,
+        updatedAt: timestamp
+    })
     saveNotes(notes)
+    location.assign(`/edit.html#${id}`)
 })
 
-bodyElement.addEventListener('input', function (e) {
-    note.body = e.target.value
-    note.updatedAt = moment().valueOf()
-    dateElement.textContent = generateLastEdited(note.updatedAt)
-    saveNotes(notes)
+document.querySelector('#search-text').addEventListener('input', (e) => {
+    filters.searchText = e.target.value
+    renderNotes(notes, filters)
 })
 
-removeElement.addEventListener('click', function (e) {
-    removeNote(note.id)
-    saveNotes(notes)
-    location.assign('/index.html')
+document.querySelector('#filter-by').addEventListener('change', (e) => {
+    filters.sortBy = e.target.value
+    renderNotes(notes, filters)
 })
 
-window.addEventListener('storage', function (e) {
+window.addEventListener('storage', (e) => {
     if (e.key === 'notes') {
         notes = JSON.parse(e.newValue)
-        note = notes.find(function (note) {
-            return note.id === noteId
-        })
-
-        if (note === undefined) {
-            location.assign('/index.html')
-        }
-
-        titleElement.value = note.title
-        bodyElement.value = note.body
-        dateElement.textContent = generateLastEdited(note.updatedAt)
+        renderNotes(notes, filters)
     }
 })
