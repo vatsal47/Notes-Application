@@ -28,10 +28,9 @@ const removeNote = function (id) {
 // Generate the DOM structure for a note
 const generateNoteDOM = function (note) {
     const noteEl = document.createElement('div')
-    const textEl = document.createElement('span')
+    const textEl = document.createElement('a')
     const button = document.createElement('button')
 
-<<<<<<< HEAD
     // Setup the remove note button
     button.textContent = 'x'
     noteEl.appendChild(button)
@@ -40,24 +39,14 @@ const generateNoteDOM = function (note) {
         saveNotes(notes)
         renderNotes(notes, filters)
     })
-=======
-    button.textContent = 'Remove'
-    noteEl.appendChild(button)
-    
->>>>>>> 1363578a90a6bf5b2bf00fcb4883b3f7ba040f3e
 
     // Setup the note title text
     if (note.title.length > 0) {
         textEl.textContent = note.title
     } else {
-<<<<<<< HEAD
         textEl.textContent = 'Unnamed note'
-=======
-        textEl.textContent = 'Unnamed Recipe'
->>>>>>> 1363578a90a6bf5b2bf00fcb4883b3f7ba040f3e
     }
-    noteEl.appendChild(textEl)
-
+    textEl.setAttribute('href', `/edit.html#${note.id}`)
     noteEl.appendChild(textEl)
 
     return noteEl
